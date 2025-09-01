@@ -1,3 +1,7 @@
+# 修改 EasyMosdns 自用
+- 去掉远程上游，只使用本地 DNS 查询，添加更多 DNS 服务器，只使用 DOH,DOT 协议的 DNS 服务器
+- 添加 docker-compose.yml 配置文件
+
 # EasyMosdns v3.5
 
 基于Mosdns-x的精准DNS分流策略，仅需几分钟即可搭建一台支持ECS的无污染DNS服务器。<br />
