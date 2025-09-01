@@ -1,0 +1,10 @@
+services:
+  mosdns:
+    image: irinesistiana/mosdns:v4.5.3
+    container_name: mosdns
+    ports:
+      - "5533:53/tcp"
+      - "5533:53/udp"
+    volumes:
+      - ./conf:/etc/mosdns
+    restart: unless-stopped
