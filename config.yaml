@@ -237,18 +237,158 @@ plugins:
     type: fast_forward
     args:
       upstream:
-        - addr: "223.5.5.5"
-        - addr: "119.29.29.29"
+        ######## AliDNS ########
+        # DoH
+        - addr: "https://dns.alidns.com/dns-query"
+          dial_addr: "223.6.6.6"
+
+        # DoT
+        - addr: "tls://dns.alidns.com"
+          dial_addr: "2400:3200:baba::1"
+          enable_pipeline: true
+        - addr: "tls://dns.alidns.com"
+          dial_addr: "223.5.5.5"
+          enable_pipeline: true
+
+        # DoH3
+        - addr: "https://dns.alidns.com/dns-query"
+          dial_addr: "223.5.5.5"
+          enable_http3: true
+        - addr: "https://dns.alidns.com/dns-query"
+          dial_addr: "2400:3200::1"
+          enable_http3: true
+
+        ######## DNSPod ########
+        # DoH
+        - addr: "https://doh.pub/dns-query"
+          dial_addr: "1.12.12.12"
+        - addr: "https://doh.pub/dns-query"
+          dial_addr: "120.53.53.53"
+
+        # DoT
+        - addr: "tls://dot.pub"
+          dial_addr: "1.12.12.12"
+          enable_pipeline: true
+        - addr: "tls://dot.pub"
+          dial_addr: "120.53.53.53"
+          enable_pipeline: true
 
   # 转发至远程服务器的插件
   - tag: forward_remote
     type: fast_forward
     args:
       upstream:
-        - addr: "tcp://208.67.220.220:5353"
+      # Google DoH
+        - addr: "https://dns.google/dns-query"
+          dial_addr: "2001:4860:4860::6464"
+          trusted: true
           enable_pipeline: true
-          #socks5: "127.0.0.1:1080"
-        - addr: "udpme://8.8.8.8"
+        - addr: "https://dns.google/dns-query"
+          dial_addr: "2001:4860:4860::64"
+          trusted: true
+          enable_pipeline: true
+        - addr: "https://dns.google/dns-query"
+          dial_addr: "2001:4860:4860::8844"
+          trusted: true
+          enable_pipeline: true
+        - addr: "https://dns.google/dns-query"
+          dial_addr: "2001:4860:4860::8888"
+          trusted: true
+          enable_pipeline: true
+        - addr: "https://dns.google/dns-query"
+          dial_addr: "8.8.4.4"
+          trusted: true
+          enable_pipeline: true
+        - addr: "https://dns.google/dns-query"
+          dial_addr: "8.8.8.8"
+          trusted: true
+          enable_pipeline: true
+
+        # Google DoT
+        - addr: "tls://dns.google"
+          dial_addr: "8.8.4.4"
+          trusted: true
+          enable_pipeline: true
+        - addr: "tls://dns.google"
+          dial_addr: "2001:4860:4860::8888"
+          trusted: true
+          enable_pipeline: true
+        - addr: "tls://dns.google"
+          dial_addr: "8.8.8.8"
+          trusted: true
+          enable_pipeline: true
+
+        # Google DoH3
+        - addr: "https://dns.google/dns-query"
+          dial_addr: "2001:4860:4860::8844"
+          trusted: true
+          enable_http3: true
+        - addr: "https://dns.google/dns-query"
+          dial_addr: "8.8.4.4"
+          trusted: true
+          enable_http3: true
+        - addr: "https://dns.google/dns-query"
+          dial_addr: "2001:4860:4860::8888"
+          trusted: true
+          enable_http3: true
+        - addr: "https://dns.google/dns-query"
+          dial_addr: "8.8.8.8"
+          trusted: true
+          enable_http3: true
+
+        # Cloudflare DoH
+        - addr: "https://cloudflare-dns.com/dns-query"
+          dial_addr: "2606:4700:4700::1001"
+          trusted: true
+          enable_pipeline: true
+        - addr: "https://cloudflare-dns.com/dns-query"
+          dial_addr: "1.0.0.1"
+          trusted: true
+          enable_pipeline: true
+        - addr: "https://cloudflare-dns.com/dns-query"
+          dial_addr: "2606:4700:4700::1111"
+          trusted: true
+          enable_pipeline: true
+        - addr: "https://cloudflare-dns.com/dns-query"
+          dial_addr: "1.1.1.1"
+          trusted: true
+          enable_pipeline: true
+
+        # Cloudflare DoT
+        - addr: "tls://1dot1dot1dot1.cloudflare-dns.com"
+          dial_addr: "2606:4700:4700::1001"
+          trusted: true
+          enable_pipeline: true
+        - addr: "tls://1dot1dot1dot1.cloudflare-dns.com"
+          dial_addr: "1.0.0.1"
+          trusted: true
+          enable_pipeline: true
+        - addr: "tls://1dot1dot1dot1.cloudflare-dns.com"
+          dial_addr: "2606:4700:4700::1111"
+          trusted: true
+          enable_pipeline: true
+        - addr: "tls://1dot1dot1dot1.cloudflare-dns.com"
+          dial_addr: "1.1.1.1"
+          trusted: true
+          enable_pipeline: true
+
+        # Cloudflare DoH3
+        - addr: "https://cloudflare-dns.com/dns-query"
+          dial_addr: "2606:4700:4700::1001"
+          trusted: true
+          enable_http3: true
+        - addr: "https://cloudflare-dns.com/dns-query"
+          dial_addr: "1.0.0.1"
+          trusted: true
+          enable_http3: true
+        - addr: "https://cloudflare-dns.com/dns-query"
+          dial_addr: "2606:4700:4700::1111"
+          trusted: true
+          enable_http3: true
+        - addr: "https://cloudflare-dns.com/dns-query"
+          dial_addr: "1.1.1.1"
+          trusted: true
+          enable_http3: true
 
   # 转发至分流服务器的插件
   - tag: forward_easymosdns
@@ -306,14 +446,15 @@ plugins:
             # 优先返回ipv4结果
             - _prefer_ipv4
             - ecs_global
-            - primary:
-                # 默认用分流服务器
-                - forward_easymosdns
-              secondary:
-                # 超时用远程服务器
-                - forward_remote
-              fast_fallback: 2500
-              always_standby: false
+            - forward_remote
+            # - primary:
+            #     # 默认用分流服务器
+            #     - forward_easymosdns
+            #   secondary:
+            #     # 超时用远程服务器
+            #     - forward_remote
+            #   fast_fallback: 2500
+            #   always_standby: false
             - ttl_5m
             - _return
 
@@ -343,38 +484,40 @@ plugins:
             # 优先返回ipv4结果
             - _prefer_ipv4
             - ecs_global
-            - primary:
-                # 默认用分流服务器
-                - forward_easymosdns
-              secondary:
-                # 超时用远程服务器
-                - forward_remote
-              fast_fallback: 2500
-              always_standby: false
+            - forward_remote
+            # - primary:
+            #     # 默认用分流服务器
+            #     - forward_easymosdns
+            #   secondary:
+            #     # 超时用远程服务器
+            #     - forward_remote
+            #   fast_fallback: 2500
+            #   always_standby: false
             - ttl_5m
             - _return
 
         # 剩下的未知域名用IP分流
         # 优先返回ipv4结果
         - _prefer_ipv4
-        - primary:
-            # 默认用分流服务器
-            - ecs_local
-            - forward_easymosdns
-            - if: "(ecs_is_local) && (response_has_local_ip) || [response_server_failed]"
-              exec:
-                - _no_ecs
-                - forward_local
-                - _return
-          secondary:
-            # 超时用本地分流器
-            - forward_remote
-            - if: response_has_local_ip
-              exec:
-                - forward_local
-                - _return
-          fast_fallback: 2500
-          always_standby: false
+        - forward_remote
+        # - primary:
+        #     # 默认用分流服务器
+        #     - ecs_local
+        #     - forward_easymosdns
+        #     - if: "(ecs_is_local) && (response_has_local_ip) || [response_server_failed]"
+        #       exec:
+        #         - _no_ecs
+        #         - forward_local
+        #         - _return
+        #   secondary:
+        #     # 超时用本地分流器
+        #     - forward_remote
+        #     - if: response_has_local_ip
+        #       exec:
+        #         - forward_local
+        #         - _return
+        #   fast_fallback: 2500
+        #   always_standby: false
         - ttl_5m
 
 servers:
